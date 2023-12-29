@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aidata.fundingtrip.dao.BoardDao">
+    <insert id="insertQnABoard" parameterType="com.aidata.fundingtrip.dto.QnABoardDto" useGeneratedKeys="true" keyProperty="qnum">
+        <selectKey keyProperty="qnum" resultType="Integer" order="AFTER">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        INSERT INTO qboard VALUES(NULL, #{qmid}, #{qtitle}, #{qcategory}, #{qcontents}, default)
+    </insert>
+
+    <insert id="insertQnAReply" parameterType="com.aidata.fundingtrip.dto.QnAReplyDto" useGeneratedKeys="true" keyProperty="qrnum">
+        <selectKey keyProperty="qrnum" resultType="Integer" order="AFTER">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        INSERT INTO qreply VALUES(null, #{qrbnum}, #{qrmid}, #{qrcontents}, default)
+    </insert>
+
+    <insert id="insertFundBoard" parameterType="com.aidata.fundingtrip.dto.TripBoardDto" useGeneratedKeys="true" keyProperty="tnum">
+        <selectKey keyProperty="tnum" resultType="Integer" order="AFTER">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        INSERT INTO tboard
+        VALUES (NULL, #{tmid}, #{ttitle}, #{tcontents}, #{tpeople}, #{tstart}, #{tend}, default)
+    </insert>
+
+    <insert id="insertFundFile">
+        INSERT INTO tboardfile
+        VALUES (NULL,#{tftnum},#{toriname},#{tsysname})
+    </insert>
+
+    <update id="updateQnABoard" parameterType="com.aidata.fundingtrip.dto.QnABoardDto">
+        UPDATE qboard
+        SET qtitle = #{qtitle},
+            qcontents = #{qcontents}
+        WHERE qnum = #{qnum}
+    </update>
+
+    <delete id="deleteQnAReply" parameterType="Integer">
+        DELETE
+        FROM qreply
+        WHERE qrbnum = #{qrbnum}
+    </delete>
+
+    <delete id="deleteQnABoard" parameterType="Integer">
+        DELETE
+        FROM qboard
+        WHERE qnum = #{qnum}
+    </delete>
+
+    <select id="selectQnABoard" resultType="com.aidata.fundingtrip.dto.QnABoardDto" parameterType="Integer">
+        SELECT *
+        FROM qboard
+        WHERE qnum = #{qnum}
+    </select>
+
+    <select id="selectQnABoardCnt" resultType="int" parameterType="com.aidata.fundingtrip.dto.SearchDto">
+        SELECT COUNT(*) FROM qboard
+    </select>
+
+    <select id="selectQnAReplyList" resultType="com.aidata.fundingtrip.dto.QnAReplyDto" parameterType="Integer">
+        SELECT *
+        FROM qreply
+        WHERE qrbnum = #{qrbnum}
+    </select>
+
+    <select id="selectLastQnAReply" resultType="com.aidata.fundingtrip.dto.QnAReplyDto" parameterType="Integer">
+        SELECT *
+        FROM qreply
+        WHERE qrnum = #{qrnum}
+    </select>
+
+    <select id="selectTripBoardList" resultType="com.aidata.fundingtrip.dto.TripBoardDto" parameterType="com.aidata.fundingtrip.dto.SearchDto">
+        SELECT * from tlist
+        <if test="colname != null and colname != ''">
+            WHERE ${colname} LIKE concat('%',#{keyword},'%')
+        </if>
+        LIMIT #{pageNum}, #{listCnt}
+    </select>
+    <select id="selectTripBoardCnt" resultType="java.lang.Integer" parameterType="com.aidata.fundingtrip.dto.SearchDto">
+        SELECT count(*) FROM tlist
+        <if test="colname != null and colname != ''">
+            WHERE ${colname} LIKE concat('%',#{keyword},'%')
+        </if>
+    </select>
+    <select id="selectTripBoard" resultType="com.aidata.fundingtrip.dto.TripBoardDto" parameterType="Integer">
+        SELECT * FROM tlist WHERE tnum=#{tnum}
+    </select>
+    <select id="selectTripFileList" resultType="com.aidata.fundingtrip.dto.TripBoardFileDto" parameterType="Integer">
+        SELECT * FROM tboardfile WHERE tftnum=#{tnum}
+    </select>
+    <select id="selectTripReplyList" resultType="com.aidata.fundingtrip.dto.TripReplyDto" parameterType="Integer">
+        SELECT * FROM trlist WHERE trbnum=#{tnum}
+    </select>
+    <select id="selectQnABoardList" resultType="com.aidata.fundingtrip.dto.QnABoardDto">
+        SELECT * FROM qboard
+        LIMIT #{pageNum}, #{listCnt}
+    </select>
+</mapper>

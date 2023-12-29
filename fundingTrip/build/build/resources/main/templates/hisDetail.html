@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FundTrip</title>
+  <script src="js/jquery-3.7.1.min.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Open Sans', sans-serif;
+    }
+  </style>
+  <script th:inline="javascript">
+    $(function () {
+      let m = [[${msg}]];
+      if(m != null){
+        alert(m);
+      }
+    });
+  </script>
+</head>
+<body class="bg-white text-gray-800">
+<header><th:block th:insert="~{fragments::header(${session.member})}"/> </header>
+<main class="container mx-auto my-8">
+  <div class="flex justify-between items-start">
+    <div class="w-2/3">
+      <img src="" alt="Image" class="mb-6">
+      <h2 class="text-2xl font-bold mb-4">광성보</h2>
+      <h2 class="text-2xl font-bold mb-1">▼개요</h2>
+      <p class="mb-4">조선 광해군 10년(1618년)에 고려시대의 외성을 보수하고, 1656년 광성보를 설치했는데, 이 보의 돈대는 1679년에 축조된 것이며 오두, 화도, 광성의 돈대와 오두정 포대가 이 보에 소속되었다. 1745년 완전한 석성으로 개축되어 당시 성문도 설치되었다. 광성보는 신미양요 당시 가장 격렬했던 격전지로서, 1871년 4월 24일 미국의 로저스가 통상을 요구하면서 함대를 이끌고 1,230명의 병력으로 침공하였을 때, 상륙부대가 초지진, 덕진진을 점령한 후 광성보에 이르러 백병전을 전개하였다. 당시 조선군 지휘관 어재연 장군 이하 전 용사가 열세한 무기로 용감하게 싸웠는데, 포탄이 떨어지면 칼과 창으로 싸우고 칼과 창이 부러지면 돌과 맨주먹으로 싸워 한 사람도 물러서지 않고 장렬히 순국하였다고 한다. 이 전투 후 성책과 문루가 파괴되어 폐허가 되었던 것을 1977년 안해루, 광성돈, 손돌목돈, 용두돈과 전사한 무명용사들의 묘, 그리고 어재연 장군의 쌍충비각 등이 모두 보수 정화되었으며, 이 때 세운 "강화 전적지 정화기념비"가 용두돈대 위에 서 있다. 1998년에는 해변쪽으로 넓은 휴식공간을 조성하여 관광객들에게 이용 편의를 제공할 수 있게 되었다. 광성보는 현재 사적 제 227호로 지정되어 있으며, 매년 음력 4월 24일에는 어재연 장군을 비롯하여 장렬하게 전사한 무명용사들에 대한 광성제가 11:00부터 봉행된다. 이 광성보는 당시에 사용한 대포와 포대, 성이 잘 남아 있어 아이들을 데리고 답사 오기에 좋으며, 바다를 내려다보는 전망과 돈대의 곡선 모양이 인상적이다.</p>
+      <h2 class="text-2xl font-bold mb-1">▼이용 안내</h2>
+      <p>휴무일</p>
+      <p>연중무휴</p>
+      <p>이용시간</p>
+        <p>09:00 ~ 18:00<p>
+      <p>관람소요시간</p>
+      <p>50분</p>
+      <p>줄거리</p>
+      <p>조선 광해군 10년(1618년)에 고려시대의 외성을 보수하고, 1656년 광성보를 설치했는데,</p> <p>이 보의 돈대는 1679년에 축조된 것이며 오두, 화도, 광성의 돈대와 오두정 포대가 이 보에 소속되었다.</p> <p>1745년 완전한 석성으로 개축되어 당시 성문도 설치되었다.</p> <p>광성보는 신미양요 당시 가장 격렬했던 격전지로서,</p> <p>1871년 4월 24일 미국의 로저스가 통상을 요구하면서 함대를 이끌고 1,230명의 병력으로 침공하였을 때,</p> <p>상륙부대가 초지진, 덕진진을 점령한 후 광성보에 이르러 백병전을 전개하였다.</p> <p>당시 조선군 지휘관 어재연 장군 이하 전 용사가 열세한 무기로 용감하게 싸웠는데, 포탄이 떨어지면 칼과 창으로 싸우고 칼과 창이 부러지면 돌과 맨주먹으로 싸워 한 사람도 물러서지 않고 장렬히 순국하였다고 한다.</p> <p>이 전투 후 성책과 문루가 파괴되어 폐허가 되었던 것을 1977년 안해루, 광성돈, 손돌목돈, 용두돈과 전사한 무명용사들의 묘, 그리고 어재연 장군의 쌍충비각 등이 모두 보수 정화되었으며, 이 때 세운 "강화 전적지 정화기념비"가 용두돈대 위에 서 있다.</p> <p>1998년에는 해변쪽으로 넓은 휴식공간을 조성하여 관광객들에게 이용 편의를 제공할 수 있게 되었다.</p> <p>광성보는 현재 사적 제 227호로 지정되어 있으며,</p> <p>매년 음력 4월 24일에는 어재연 장군을 비롯하여 장렬하게 전사한 무명용사들에 대한 광성제가 11:00부터 봉행된다.</p> <p>이 광성보는 당시에 사용한 대포와 포대, 성이 잘 남아 있어 아이들을 데리고 답사 오기에 좋으며,</p> <p>바다를 내려다보는 전망과 돈대의 곡선 모양이 인상적이다.</p>
+      <p>관람 소요시간</p>
+      <p>50분</p>
+      <p>할인정보</p>
+      <p>강화군 주요관광지 알짜배기 할인 (최대 20% 할인)</p>
+      <p>- 대상시설 중 3~4개소 선택 : 15% 할인 / 대상시설 중 5개소 이상 선택 : 20% 할인</p>
+      <p>※ 대상시설 : 초지진, 덕진진, 광성보, 갑곶돈대, 고려궁지, 평화전망대, 화문석문화관, 역사 (자연사) 박물관,
+        마니산, 갯벌센터, 함허동천</p>
+      <p>※ 할인율 적용 후 합계에서 100원 미만은 절사 / 8개소 이상 선택 시 다음날까지 사용 가능</p>
+    </div>
+    <aside class="w-1/3 pl-8">
+      <h3 class="text-xl font-semibold mb-3">최근 게시물</h3>
+      <ul>
+        <li class="mb-2"><a href="#" class="text-blue-600 hover:underline">최근 게시물 1</a></li>
+        <li class="mb-2"><a href="#" class="text-blue-600 hover:underline">최근 게시물 2</a></li>
+      </ul>
+    </aside>
+  </div>
+</main>
+
+<footer class="bg-gray-100 py-6">
+  <div class="container mx-auto text-center">
+    <p>&copy; 2023 FundTrip. All rights reserved.</p>
+  </div>
+</footer>
+</body>
+</html>

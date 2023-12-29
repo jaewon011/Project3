@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Site Name</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="js/jquery-3.7.1.min.js"></script>
+    <script th:inline="javascript">
+        $(function () {
+            let m = [[${msg}]];
+            if(m != null){
+                alert(m);
+            }
+
+            //파일 업로드 시 선택한 파일명 출력
+            $("#file").on("change", function () {
+                //파일 입력창(input type=file)에서 파일 목록 가져오기
+                let files = $("#file")[0].files;
+                console.log(files);
+
+                let fileName = "";
+
+                if(files.length > 1){//하나 이상의 파일을 선택했을 경우
+                    fileName = files[0].name + " 외 "
+                        + (files.length - 1) + "개";
+                }
+                else if(files.length == 1) {
+                    fileName = files[0].name;
+                }
+                else {//파일 선택 창에서 '취소' 버튼을 클릭
+                    fileName = "파일선택";
+                }
+
+                $(".upload-name").val(fileName);
+            });
+        });
+    </script>
+</head>
+<body>
+<header>
+    <th:block th:insert="~{fragments::header(${session.member})}" />
+</header>
+<main class="py-8">
+    <div class="min-h-screen flex flex-col items-center justify-center">
+        <div class="w-full max-w-4xl p-5">
+            <h1 class="text-3xl font-bold mb-6">유적지 글쓰기</h1>
+    <form th:action="@{hiswriteProc}" method="post"
+          enctype="multipart/form-data">
+        <div class="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-2 gap-8">
+            </div>
+        <div class="border p-4">
+            <label for="hispic">사진 업로드:</label>
+            <input type="file" id="hispic" name="files" multiple>
+<!--            <input type="text" class="pic-name" value="파일선택" readonly>-->
+        </div>
+        <div class="border p-4">
+            <label for="hisname" class="block text-sm font-medium text-gray-700">유적지 이름:</label>
+            <input type="text" id="hisname" name="hisname" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+        </div>
+            <div class="border p-4">
+                <label for="hisloca" class="block text-sm font-medium text-gray-700">유적지 위치:</label>
+                <input type="text" id="hisloca" name="hisloca" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+            </div>
+            <!-- 이미지 업로드 폼 -->
+            <div class="border p-4">
+                <label for="hisexplan" class="block text-sm font-medium text-gray-700">설명:</label>
+                <textarea id="hisexplan" name="hisexplan" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"></textarea>
+            </div>
+            <div class="border p-4">
+                <label for="hisinfo" class="block text-sm font-medium text-gray-700">이용 안내:</label>
+                <textarea id="hisinfo" name="hisinfo" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"></textarea>
+            </div>
+        <div class="btn-area">
+            <button type="submit" class="btn-write" id="okbtn" value="글쓰기" >글쓰기</button>
+            <button type="button" class="btn-write" id="backbtn" value="뒤로가기">뒤로가기</button>
+        </div>
+    </form>
+<footer>
+    <th:block th:insert="~{fragments::footer}" />
+</footer>
+</body>
+<script th:inline="javascript">
+        //파일명 처리용 함수
+        // $("#hispic").on("change", function () {
+        //     //파일 선택창에서 업로드할 파일을 선택한 다음
+        //     //'열기' 버튼을 누르면 change 이벤트가 발생.
+        //     //console.log($("#file"));
+        //     let files = $("#hispic")[0].files;
+        //     console.log(files);
+        //
+        //     let fileName = "";//출력할 문장 저장 변수
+        //
+        //     if(files.length > 1){
+        //         fileName = `${files[0].name} 외 ${files.length - 1}개`;
+        //     } else if(files.length == 1){
+        //         fileName = files[0].name;
+        //     } else {
+        //         fileName = "파일선택";
+        //     }
+        //     $(".pic-name").val(fileName);
+        // });
+
+    $("#backbtn").click(function () {
+        let url = "/hisList?";
+
+        const listDto = [[${session.ldto}]];
+        let colname = "";
+        let keyword = "";
+        if(listDto != null){
+            colname = listDto.colname;
+            keyword = listDto.keyword;
+        }
+        let page = [[${session.pageNum}]];
+
+        if(colname == null || colname == ""){//검색 안한 목록 이동
+            url += `pageNum=${page}`;
+        } else {//검색한 결과 목록으로 이동.
+            url += `colname=${colname}&keyword=${keyword}&pageNum=${page}`;
+        }
+        console.log(url);
+        location.href = url;
+    });
+        // $("#okbtn").click(function (event) {
+        //     let url = "/hisList?";
+        //
+        //     const wfrm = new FormData($("#wfrm")[0]);  // FormData 객체 생성
+        //
+        //     // 파일 필드를 'files'로 추가
+        //     const files = $("#hispic")[0].files;
+        //     for (let i = 0; i < files.length; i++) {
+        //         wfrm.append('files', files[i]);
+        //     }
+        //
+        //     // 기존에 파일명 처리용 함수가 있으므로 추가 확인 작업이 필요한지 확인해보세요.
+        //
+        //     $.ajax({
+        //         url: "hiswriteProc",
+        //         type: "POST",
+        //         data: wfrm,
+        //         processData: false,
+        //         contentType: false,
+        //         success: function (res) {
+        //             console.log(res);
+        //             // 추가적으로 필요한 로직을 여기에 작성
+        //         },
+        //         error: function (err) {
+        //             console.log(err);
+        //         }
+        //     });
+        // });
+</script>
+</html>

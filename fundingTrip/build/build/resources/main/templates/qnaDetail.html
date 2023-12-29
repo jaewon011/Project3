@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Customer Service Center</title>
+	<script src="https://cdn.tailwindcss.com"></script>
+	<script src="js/jquery-3.7.1.min.js"></script>
+	<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+	<link rel="stylesheet" href="css/style.css">
+	<style>
+        body {
+            font-family: 'Open Sans', sans-serif;
+        }
+
+        .form-input, .form-textarea, .form-button {
+            transition: border-color .3s ease;
+        }
+
+        .form-input:focus, .form-textarea:focus {
+            border-color: #4f46e5;
+            outline: none;
+        }
+
+        .form-button:hover {
+            background-color: #3730a3;
+        }
+	</style>
+	<script th:inline="javascript">
+        $(function () {
+            let m = [[${msg}]];
+            if (m != null) {
+                alert(m);
+            }
+        })
+	</script>
+</head>
+<body class="bg-gray-100">
+<header>
+	<th:block th:insert="~{fragments::header(${session.member})}"/>
+</header>
+<section>
+	<div class="min-h-screen flex flex-col items-center justify-center">
+		<div class="bg-white shadow-lg rounded-lg p-8 max-w-2xl w-full">
+			<div class="user-info">
+				<div class="user-info-sub" th:object="${session.member}">
+					<!--<p th:text=" '등급 [' +*{gname}+ ']' "></p>-->
+				</div>
+			</div>
+			<div class="flex items-center space-x-4 mb-6">
+				<img src="https://unsplash.com/photos/5NLCaz2wJXE/download?force=true&w=640" alt="Customer Service"
+					 class="w-16 h-16 rounded-full">
+				<h1 class="text-2xl font-semibold">고객센터</h1>
+			</div>
+
+			<form id="complaintForm" class="space-y-4">
+				<div>
+					<label for="title" class="block text-sm font-medium text-gray-700" id="min">제목</label>
+					<div class="mt-1 flex rounded-md shadow-sm" th:text="${qboard.qtitle}">
+						<input type="text" name="title" id="title"
+							   class="form-input flex-1 block w-full min-w-0 rounded-none rounded-l-md sm:text-sm border-gray-300"
+							   placeholder="제목을 입력하세요.">
+					</div>
+				</div>
+				<div>
+					<label for="reason" class="block text-sm font-medium text-gray-700">민원 사유</label>
+					<div class="mt-1">
+						<input type="text" name="reason" id="reason"
+							   class="form-input block w-full sm:text-sm border-gray-300 rounded-md"
+							   placeholder="민원 사유를 작성해주세요.">
+					</div>
+				</div>
+				<div>
+					<label for="detail" class="block text-sm font-medium text-gray-700">내용</label>
+					<div class="mt-1">
+					<textarea id="detail" name="detail" rows="4"
+							  class="form-textarea block w-full sm:text-sm border-gray-300 rounded-md"
+							  placeholder="내용을 작성해주세요."></textarea>
+					</div>
+				</div>
+				<div class="flex items-center justify-between"><!--글 수정/삭제/뒤로 가기 버튼-->
+					<button type="button"
+							class="form-button inline-flex items-center px-4 py-2
+							border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700
+							focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+							id="upbtn">수정
+					</button>
+					<button type="button"
+							class="form-button inline-flex items-center px-4 py-2
+							border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none
+							focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+							id="delbtn">삭제
+					</button>
+					<button type="button"
+							class="form-button inline-flex items-center px-4 py-2
+							border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50
+							focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+							id="backbtn">뒤로가기
+					</button>
+				</div>
+				<div><!--댓글(답변)처리-->
+					<form id="qrForm">
+						<input type="hidden" name="qrbnum" th:value="${qboard.qunm}">
+						<input type="hidden" name="qrmid" th:value="${session.member.mid}">
+						<textarea name="r_contents" rows="3" class="write-input ta" id="comment"
+								  placeholder="답변을 적어주세요"></textarea>
+						<input type="button" value="답변 전송" class="btn-write" id="qrbtn"
+							   style="width: 100%; margin-bottom: 30px">
+					</form>
+					<div id="qrSpace">
+						<th:block th:each="qritem:${qrList}">
+							<div class="t_contents p-20 re" th:text="${qritem.qrmid}"></div>
+							<div class="t_contents p-50 re" th:text="${qritem.qrcontents}"></div>
+							<div class="t_contents p-30 re" th:text="${qritem.qrdate}"></div>
+						</th:block>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+</section>
+<footer>
+	<th:block th:insert="~{fragments::footer}"/>
+</footer>
+</body>
+<script th:inline="javascript">
+    $("#backbtn").click(function () {
+        let url = "/qnaList?";
+
+        //삭제 처리
+        $("#delbtn").click(function () {
+            let con = confirm("게시글을 삭제합니다.");
+            if (con == true) {
+                let qnum = [[${board.q_num}]];
+                location.href = `/qnaDelete?q_num=${qnum}`;
+            }
+        });
+        $("#upbtn").click(function () {
+            let qnum = [[${board.q_num}]];
+            location.href = `/updateForm?q_num=${qnum}`;
+        })
+    });
+
+    //댓글 전송 및 처리
+    $("#qrbtn").click(function () {
+        const qrForm = $("#qrform").serialize();
+
+        //RestController에 전송
+        $.ajax({
+            url: "QnAReplyInsert",
+            type: "post",
+            data: qrForm,
+            success: function (res) {
+                console.log(res);
+                if (res == "ok") {
+                    let str = "";
+                    str += `
+					<div class="t_content p-20 re">${res.qrmid}</div>
+                    <div class="d_content p-50 re">${res.qrcontents}></div>
+                    <div class="d_content p-30 re">${res.qrdate}</div>`;
+                    $("#qrSpace").prepend(str);
+                    $("#comment").val("");
+                } else {
+                    alert("댓글 저장 실패");
+                    $("#comment").val("");
+                    $("#comment").focus();
+                }
+            },
+            error: function (err) {
+                console.log(err);
+                alert("댓글 저장 실패");
+            }
+        });
+    });
+</script>
+</html>

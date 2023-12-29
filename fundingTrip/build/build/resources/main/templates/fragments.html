@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Title</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="js/jquery-3.7.1.min.js"></script>
+</head>
+<body>
+<div th:fragment="header(member)" class="bg-gray-100 py-4">
+    <div class="container mx-auto flex justify-between items-center">
+        <div>
+            <a th:href="@{index}" class="flex items-center py-4 px-2">
+                <span class="header-logo text-blue-600 text-2xl">✈️ Funding Trip</span>
+            </a>
+        </div>
+        <div class="hidden md:flex items-center space-x-1">
+            <a th:href="@{index}" class="py-4 px-2 text-gray-700 hover:text-gray-900">홈</a>
+            <a th:href="@{hisList?pageNum=1}" class="py-4 px-2 text-gray-700 hover:text-gray-900">여행 정보</a>
+            <a th:href="@{fundList}" class="py-4 px-2 text-gray-700 hover:text-gray-900">펀딩 목록</a>
+            <th:block th:if="${member == null}">
+                <a th:href="@{loginForm}" class="py-4 px-2 text-gray-700 hover:text-gray-900">Login</a>
+                <a th:href="@{joinForm}" class="py-4 px-2 text-gray-700 hover:text-gray-900">Join</a>
+            </th:block>
+            <th:block th:unless="${member == null}">
+            <a th:href="@{myFundList}" class="py-4 px-2 text-gray-700 hover:text-gray-900">나의 펀딩 목록</a>
+            <a th:href="@{myPage}" class="py-4 px-2 text-gray-700 hover:text-gray-900">My Page</a>
+            <a th:href="@{qnaList?pageNum=1}" class="py-4 px-2 text-gray-700 hover:text-gray-900">고객센터</a>
+            <a th:href="@{logout}" class="py-4 px-2 text-gray-700 hover:text-gray-900">로그아웃</a>
+            </th:block>
+        </div>
+    </div>
+    <script th:inline="javascript">
+        // 세션에서 멤버 정보 가져오기
+        const mem =[[${session.member}]];
+    </script>
+</div>
+
+<div th:fragment="footer" class="bg-gray-100 p-4 text-center text-sm text-gray-500">
+    © 2023 FundTrip. All rights reserved.
+</div>
+</body>
+</html>

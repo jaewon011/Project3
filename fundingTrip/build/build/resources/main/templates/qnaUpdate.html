@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Customer Service Center</title>
+	<script src="https://cdn.tailwindcss.com"></script>
+	<script src="js/jquery-3.7.1.min.js"></script>
+	<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+	<link rel="stylesheet" href="css/style.css">
+	<style>
+        body {
+            font-family: 'Open Sans', sans-serif;
+        }
+
+        .form-input, .form-textarea, .form-button {
+            transition: border-color .3s ease;
+        }
+
+        .form-input:focus, .form-textarea:focus {
+            border-color: #4f46e5;
+            outline: none;
+        }
+
+        .form-button:hover {
+            background-color: #3730a3;
+        }
+	</style>
+	<script th:inline="javascript">
+        $(function () {
+            let m = [[${msg}]];
+            if (m != null) {
+                alert(m);
+            }
+        })
+	</script>
+</head>
+<body class="bg-gray-100">
+<header>
+	<th:block th:insert="~{fragments::header(${session.member})}"/>
+</header>
+<section>
+
+	<div class="min-h-screen flex flex-col items-center justify-center">
+		<div class="bg-white shadow-lg rounded-lg p-8 max-w-2xl w-full">
+			<div class="flex items-center space-x-4 mb-6">
+				<img src="https://unsplash.com/photos/5NLCaz2wJXE/download?force=true&w=640" alt="Customer Service"
+					 class="w-16 h-16 rounded-full">
+				<h1 class="text-2xl font-semibold">고객센터</h1>
+			</div>
+
+			<form th:action="@{qnaUpdateProc}" id="complaintForm" class="space-y-4" enctype="multipart/form-data">
+				<div>
+					<label for="title" class="block text-sm font-medium text-gray-700" id="min">제목</label>
+					<div class="mt-1 flex rounded-md shadow-sm">
+						<input type="text" name="title" id="title"
+							   class="form-input flex-1 block w-full min-w-0 rounded-none rounded-l-md sm:text-sm border-gray-300"
+							   placeholder="제목을 입력하세요.">
+					</div>
+				</div>
+				<div>
+					<label for="reason" class="block text-sm font-medium text-gray-700">민원 사유</label>
+					<div class="mt-1">
+						<input type="text" name="reason" id="reason"
+							   class="form-input block w-full sm:text-sm border-gray-300 rounded-md"
+							   placeholder="민원 사유를 작성해주세요.">
+					</div>
+				</div>
+				<div>
+					<label for="detail" class="block text-sm font-medium text-gray-700">내용</label>
+					<div class="mt-1">
+					<textarea id="detail" name="detail" rows="4"
+							  class="form-textarea block w-full sm:text-sm border-gray-300 rounded-md"
+							  placeholder="내용을 작성해주세요."></textarea>
+					</div>
+				</div>
+				<div class="flex items-center justify-between">
+					<button type="submit"
+							class="form-button inline-flex items-center px-4 py-2
+							border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600
+							hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+							id="qnupbtn"><a th:href="@{qnaList}"> 수정 완료</a></button>
+					<button type="button"
+							class="form-button inline-flex items-center px-4 py-2
+							border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white
+							hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+							id="qnbackbtn"><a th:href="@{qnaDetail}">뒤로가기</a></button>
+				</div>
+			</form>
+		</div>
+	</div>
+</section>
+<footer>
+	<th:block th:insert="~{fragments::footer}"/>
+</footer>
+</body>
+<script th:inline="javascript">
+    $("#qnbackbtn").click(function () {
+        let url = "/qnaList?";
+
+        const ListDto = [[${session.lDto}]];
+        let colname = "";
+        let keyword = "";
+        if (searchDto != null) {
+            colname = ListDto.colname;
+            keyword = ListDto.keyword;
+        }
+    });
+    $("#qnupbtn").click(function () {
+        let qnum = [[${qboard.qnum}]];
+        location.href = `/updateForm?q_num=${qnum}`;
+    })
+</script>
+</html>

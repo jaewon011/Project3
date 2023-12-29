@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FundTrip</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="js/jquery-3.7.1.min.js"></script>
+    <link rel="stylesheet" href="CSS/style.css">
+    <style>
+        /* Additional styles if needed */
+    </style>
+    <script th:inline="javascript">
+        $(function () {
+            let m = [[${msg}]];
+            if(m != null){
+                alert(m);
+            }
+        })
+    </script>
+</head>
+<body class="bg-white text-gray-800">
+<header><th:block th:insert="~{fragments::header(${session.member})}"/> </header>
+
+    <div class="container mx-auto my-8">
+        <div class="board-form">
+
+            <div class="data-area">
+                <div class="title-row">
+                    <!-- 테이블 헤더 -->
+                    <div class="p-10">번호</div>
+                    <div class="p-30">제목</div>
+                    <div class="p-15">작성자</div>
+                    <div class="p-10">승인</div>
+                </div>
+                <div class="data-row">
+                    <!-- 게시글 목록 -->
+                    <th:block th:if="${#lists.isEmpty(tList)}">
+                        <div style="width: 100%">
+                            게시글이 없습니다.
+                        </div>
+                    </th:block>
+                    <th:block th:unless="${#lists.isEmpty(tList)}">
+                        <th:block th:each="titem:${tList}">
+                            <div class="t-no p-10" th:text="${titem.tnum}"></div>
+                            <!-- 제목을 클릭하면 상세 페이지로 이동 -->
+                            <div class="t-title p-30">
+                                <a th:href="@{detailFund(tnum=${titem.tnum})}" th:text="${titem.ttitle}"></a>
+                            </div>
+                            <div class="t-name p-15" th:text="${titem.tmid}"></div>
+                            <div class="t-status p-10" th:text="${titem.tstatus}"></div>
+                        </th:block>
+                    </th:block>
+                </div>
+            </div>
+            <div class="search-area">
+                <!-- 검색 조건 선택 -->
+                <select id="sel">
+                    <option value="ttitle" selected>
+                        제목
+                    </option>
+                    <option value="tcontents">
+                        내용
+                    </option>
+                </select>
+                <!-- 검색 키워드 입력 -->
+                <input type="text" id="keyword">
+                <!-- 검색 버튼 -->
+                <button id="search">검색</button>
+            </div>
+            <div class="btn-area">
+                <!-- 페이지 번호 및 글쓰기 버튼 -->
+                <div class="paging" th:utext="${paging}"></div>
+                <button class="w-80 px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50" id="write">
+                    글쓰기
+                </button>
+            </div>
+        </div>
+    </div>
+
+<footer><th:block th:insert="~{fragments::footer}"/></footer>
+</body>
+<script>
+    $("#search").click(function (){
+        //사용자가 입력한 검색 키워드를 가져온다.
+        let keyword = $("#keyword").val();
+        if (keyword == ""){
+            alert("검색어를 입력하세요.");
+            return;
+        }
+        // 선택된 검색 조건을 가져온다.
+        let select = $("#sel").val();
+        //검색용 uri 생성 및 실행(location.href)
+        location.href = `/boardList?colname=${select}&keyword=${keyword}&pageNum=1`
+    });
+    // 글쓰기 버튼 클릭 시 글쓰기 페이지로 이동
+    $("#write").click(function (){
+        location.href = "/fundWrite";
+    });
+</script>
+</html>

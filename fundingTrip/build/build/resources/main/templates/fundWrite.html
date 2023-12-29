@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Writing Page</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="js/jquery-3.7.1.min.js"></script>
+    <style>
+        /* Additional styles if needed */
+    </style>
+    <script th:inline="javascript">
+        $(function () {
+            let m = [[${msg}]];
+            if(m != null){
+                alert(m);
+            }
+
+            //파일 업로드 시 선택한 파일명 출력
+            $("#file").on("change", function () {
+                //파일 입력창(input type=file)에서 파일 목록 가져오기
+                let files = $("#file")[0].files;
+                console.log(files);
+
+                let fileName = "";
+
+                if(files.length > 1){//하나 이상의 파일을 선택했을 경우
+                    fileName = files[0].name + " 외 "
+                        + (files.length - 1) + "개";
+                }
+                else if(files.length == 1) {
+                    fileName = files[0].name;
+                }
+                else {//파일 선택 창에서 '취소' 버튼을 클릭
+                    fileName = "파일선택";
+                }
+
+                $(".upload-name").val(fileName);
+            });
+        });
+    </script>
+</head>
+<body class="bg-white text-gray-800">
+<header><th:block th:insert="~{fragments::header(${session.member})}"/> </header>
+<div class="min-h-screen flex flex-col items-center justify-center">
+    <div class="w-full max-w-4xl p-5">
+        <h1 class="text-3xl font-bold mb-6">Writing Page</h1>
+        <form th:action="@{fundWriteProc}" class="space-y-4" method="post" enctype="multipart/form-data">
+            <div class="filebox">
+                <!-- 파일 입력 처리 영역 -->
+                <label for="file">유적지</label>
+                <input type="file" name="files" id="file">
+                <input type="text" class="upload-name" value="파일선택" readonly>
+            </div>
+            <div>
+                <input type="hidden" name="tmid" th:value="${session.member.mid}">
+                <label for="title" class="block text-sm font-medium text-gray-700">트립제목</label>
+                <input id="title" name="ttitle" type="text" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+            </div>
+            <div>
+                <label for="content" class="block text-sm font-medium text-gray-700">트립컨텐츠</label>
+                <textarea id="content" name="tcontents" rows="6" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"></textarea>
+            </div>
+            <div>
+                <input type="text" class="write-input" name="tpeople" placeholder="참여인원" required>
+            </div>
+            <div>
+                <input type="date" class="write-input" name="tstart" placeholder="여행시작일" required>
+                <input type="date" class="write-input" name="tend" placeholder="여행마지막" required>
+            </div>
+            <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50">작성완료</button>
+            <button type="button" class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50">돌아가기</button>
+        </form>
+    </div>
+</div>
+<script>
+    // JavaScript if needed
+</script>
+</body>
+<script th:inline="javascript">
+    $("#backbtn").click(function () {
+        const se = [[${session.list}]];
+
+        let cn = "", kw = "", pn = "", lc = "";
+        let urlstr = "/?";
+        if(se != null){
+            cn = se.colname;
+            kw = se.keyword;
+            pn = se.pageNum;
+            lc = se.listCnt;
+            console.log(cn, kw, pn, lc);
+        }
+        if(cn != ""){
+            urlstr += `&colname=${cn}`;
+        }
+        if(kw != ""){
+            urlstr += `&keyword=${kw}`;
+        }
+        if(pn != ""){
+            urlstr += `&pageNum=${pn}`;
+        }
+        if(lc != ""){
+            urlstr += `&listCnt=${lc}`;
+        }
+        location.href = urlstr;
+    });
+</script>
+</html>

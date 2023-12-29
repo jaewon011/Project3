@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Funding Trip</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="js/jquery-3.7.1.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="CSS/style.css">
+    <style>
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+        }
+        .header-logo {
+            font-weight: 700;
+        }
+        .main-category {
+            color: rgb(21, 23, 25);
+        }
+        .payment-button {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .payment-button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body class="bg-white text-gray-800">
+<header><th:block th:insert="~{fragments::header(${session.member})}"/> </header>
+<div class="content">
+    <div class="write-form">
+        <div class="user-info">
+            <div class="user-info-sub" th:object="${session.member}">
+                <p th:text="'등급['+*{mgrade}+']'"></p>
+            </div>
+        </div>
+        <h2 class="login-header" th:text="${tDto.ttitle}"></h2>
+        <!-- 글 정보 표시 -->
+        <div>
+            <div class="t_content p-15">NUM</div>
+            <div class="d_content p-60"
+                 th:text="${tDto.tnum}"></div>
+            <div class="t_content p-15">승인</div>
+            <div class="d_content dp-10" th:text="${tDto.tstatus}"></div>
+        </div>
+        <div>
+            <div class="t_content p-15">WRITER</div>
+            <div class="d_content dp-15" th:text="${tDto.tmid}"></div>
+            <div class="t_content p-15">시작일</div>
+            <div class="d_content dp-30" th:text="${tDto.tstart}"></div>
+            <div class="t_content p-15">마지막일</div>
+            <div class="d_content dp-10" th:text="${tDto.tend}"></div>
+        </div>
+        <div>
+            <div class="t_content p-15">TITLE</div>
+            <div class="d_content p-85" th:text="${tDto.ttitle}"></div>
+        </div>
+        <div>
+            <div class="t_content p-15 content_h">CONTENTS</div>
+            <div class="d_content p-85 content_h" th:text="${tDto.tcontents}"></div>
+        </div>
+        <div>
+            <div class="t_content p-15 file_h">FILES</div>
+            <div class="d_content p-85 file_h" style="overflow: auto">
+                <!-- 파일 목록이 비어있을 경우 안내 메시지 표시 -->
+                <th:block th:if="${#lists.isEmpty(bfList)}">
+                    첨부된 파일이 없습니다.
+                </th:block>
+                <!-- 파일 목록이 비어있지 않은 경우 파일 링크 표시 -->
+                <th:block th:unless="${#lists.isEmpty(bfList)}">
+                    <th:block th:each="fitem:${bfList}">
+                        <a th:href="@{download(bf_sysname=${fitem.bf_sysname},bf_oriname=${fitem.bf_oriname})}">
+                            <span class="file-title" th:text="${fitem.bf_oriname}"></span>
+                        </a>
+                    </th:block>
+                </th:block>
+            </div>
+        </div>
+        <!-- 파일 미리보기 부분 -->
+        <div>
+            <th:block th:unless="${#lists.isEmpty(bfList)}">
+                <div class="t_content p-15 file_h">PREVIEW</div>
+                <div class="d_content p-85 file_h" style="overflow: auto">
+                    <th:block th:each="fitem:${bfList}">
+                        <th:block th:if="${#strings.contains(fitem.bf_oriname, '.jpg')}">
+                            <img th:src="@{upload/}+${fitem.bf_sysname}" width="100">
+                        </th:block>
+                        <th:block th:if="${#strings.contains(fitem.bf_oriname, '.png')}">
+                            <img th:src="@{upload/}+${fitem.bf_sysname}" width="100">
+                        </th:block>
+                        <th:block th:if="${#strings.contains(fitem.bf_oriname, '.gif')}">
+                            <img th:src="@{upload/}+${fitem.bf_sysname}" width="100">
+                        </th:block>
+                        <th:block th:if="${#strings.contains(fitem.bf_oriname, '.mp4')}">
+                            <video width="500" height="auto">
+                                <source th:src="@{upload/}+${fitem.bf_sysname}" type="video/mp4">
+                            </video>
+                        </th:block>
+                    </th:block>
+                </div>
+            </th:block>
+        </div>
+        <!-- 버튼 영역 -->
+        <div class="btn-area">
+            <button class="btn-write" id="upbtn">수정</button>
+            <button class="btn-write" id="delbtn">삭제</button>
+            <button class="btn-sub" id="backbtn">뒤로</button>
+            <button class="btn-write" id="okbtn">승인</button>
+            <button class="btn-write" id="ccbtn">거부</button>
+        </div>
+        <!-- 댓글 입력 폼 -->
+        <form id="rform">
+            <input type="hidden" name="r_bnum" th:value="${tDto.tnum}">
+            <input type="hidden" name="r_id" th:value="${session.member.mid}">
+            <textarea name="r_contents" rows="3" class="write-input ta" id="comment"
+                      placeholder="댓글을 적어주세요."></textarea>
+            <input type="button" value="댓글 등록" class="btn-write" id="rbtn" style="width: 100%; margin-bottom: 30px">
+        </form>
+        <!-- 댓글 출력 부분 -->
+        <div id="rSpace">
+            <th:block th:each="ritem:${rList}">
+                <div class="t_content p-20 re" th:text="${ritem.r_id}"></div>
+                <div class="d_content p-50 re" th:text="${ritem.r_contents}"></div>
+                <div class="d_content p-30 re" th:text="${ritem.r_date}"></div>
+            </th:block>
+        </div>
+    </div>
+</div>
+<footer>
+    <th:block th:insert="~{fragments::footer}"/>
+</footer>
+</body>
+<script th:inline="javascript">
+    //수정/삭제 버튼 숨기기
+    $("#upbtn").hide();
+    $("#delbtn").hide();
+    let mid = [[${session.member.mid}]];// 로그인한 ID
+    let tmid = [[${tDto.tmid}]]; // 글 작성자 ID
+    if (mid == tmid) {
+        $("#upbtn").show();
+        $("#delbtn").show();
+    }
+
+    $("#backbtn").click(function () {
+        let url = "/boardList?";
+
+        const searchDto = [[${session.sDto}]]
+        let colname = "";
+        let keyword = "";
+        if (searchDto != null) {
+            colname = searchDto.colname;
+            keyword = searchDto.keyword;
+        }
+
+        let page = [[${session.pageNum}]];
+
+        if (colname == null || colname == "") {//검색 안한 목록 이동
+            url += `pageNum=${page}`;
+        } else {
+            url += `colname=${colname}&keyword=${keyword}&pageNum=${page}`;
+        }
+        console.log(url);
+        location.href = url;
+    });
+
+    $("#delbtn").click(function () {
+        let con = confirm("게시글을 삭제할까요?");
+        if (con == true) {
+            let bnum = [[${tDto.tnum}]];
+            location.href = `/boardDelete?b_num=${bnum}`;
+        }
+    });
+
+    $("#upbtn").click(function () {
+        let bnum = [[${tDto.tnum}]];
+        location.href = `/updateForm?b_num=${bnum}`;
+    });
+
+    //댓글 전송 및 처리
+    $("#rbtn").click(function () {
+        const rForm = $("#rform").serialize();
+
+        //restcontroller에 전송
+        $.ajax({
+            url: "replyInsert",
+            type: "post",
+            data: rForm,
+            success: function (res) {
+                console.log(res);
+                if (res != null) {
+                    let str = "";
+                    str += `
+                        <div class="t_content p-20 re"> ${res.r_id}</div>
+                        <div class="d_content p-50 re"> ${res.r_contents}</div>
+                        <div class="d_content p-30 re"> ${res.r_date}</div>
+                        `;
+                    $("#rSpace").prepend(str);
+                    $("#comment").val("");
+                } else {
+                    alert("댓글 저장 실패");
+                    $("#comment").val("");
+                    $("#comment").focus();
+                }
+            },
+            error: function (err) {
+                console.log(err);
+                alert("댓글 저장 실패");
+            }
+        })
+    });
+    $("#rform").hide();
+    $("#okbtn").hide();
+    $("#ccbtn").hide();
+    let m = [[${session.member}]];
+    if(m != null){
+        let grade = m.mgrade; // 등급이 관리자인 사람만 보인다
+        if (grade == '관리자') {
+            $("#rform").show();
+            $("#okbtn").show();
+            $("#ccbtn").show();
+        }
+    }
+    //문서의 상태를 승인/거부
+    $("#okbtn").click(function () {
+        let con = confirm("승인할까요?");
+        if (con == true) {
+            let bnum = [[${tDto.tnum}]];
+            location.href=`/updateStatus?b_status=승인&b_num=${bnum}`;
+        }
+    });
+
+    $("#ccbtn").click(function () {
+        let con = confirm("거부할까요?");
+        if (con == true) {
+            let bnum = [[${tDto.tnum}]];
+            location.href=`/updateStatus?b_status=거부&b_num=${bnum}`;
+        }
+    });
+</script>
+</html>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aidata.fundingtrip.dao.MemberDao">
+    <insert id="insertMember" parameterType="com.aidata.fundingtrip.dto.MemberDto">
+        insert into member values (#{mid}, #{mpw}, #{mname}, #{mph}, #{memail}, null, null)
+    </insert>
+    <select id="selectId" resultType="Integer" parameterType="String">
+        SELECT count(*) FROM member WHERE mid=#{mid}
+    </select>
+    <select id="selectPassword" resultType="java.lang.String" parameterType="String">
+        select mpw from member where mid=#{mid}
+    </select>
+    <select id="selectMember" resultType="com.aidata.fundingtrip.dto.MemberDto" parameterType="String">
+        select * from minfo WHERE mid=#{mid}
+    </select>
+    <update id="memberUpdate" parameterType="com.aidata.fundingtrip.dto.MemberDto">
+        UPDATE member set mname=#{mname},mph=#{mph},memail=#{memail}
+        WHERE mid=#{mid}
+    </update>
+    <delete id="drawMember" parameterType="String">
+        DELETE FROM member
+        WHERE mid = #{mid}
+    </delete>
+</mapper>

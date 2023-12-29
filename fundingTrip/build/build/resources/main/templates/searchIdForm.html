@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang=ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Light Theme Website</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="js/jquery-3.7.1.min.js"></script>
+    <style>
+        /* 추후 스타일 추가 */
+    </style>
+    <script th:inline="javascript">
+        $(function () {
+            let m = [[${msg}]];
+            if(m != null){
+                alert(m);
+            }
+        })
+    </script>
+</head>
+<body class="bg-white text-gray-800">
+<header><th:block th:insert="~{fragments::header(${session.member})}"/> </header>
+<main class="container mx-auto mt-10">
+    <section class="max-w-lg mx-auto">
+        <div class="bg-gray-200 p-6 rounded-lg shadow-lg">
+            <form th:action="@{serIdProc}" method="post"
+                  class="serch-form" name="serForm"
+                  onsubmit="return check()">
+            <h2 class="text-2xl font-semibold mb-4 text-center">아이디 찾기</h2>
+            <form >
+                <div class="mb-4">
+                    <label for="email" class="block text-sm font-medium text-gray-700 mb-2">E-mail</label>
+                    <input type="email" id="email" class="w-full px-3 py-2 border border-gray-300 rounded-md" placeholder="Enter your email">
+                </div>
+                <div class="mb-6">
+                    <label for="name" class="block text-sm font-medium text-gray-700 mb-2">이름</label>
+                    <input type="text" id="name" class="w-full px-3 py-2 border border-gray-300 rounded-md" placeholder="Enter your name">
+                </div>
+                <div class="flex justify-center mb-4">
+                    <button type="submit" class="px-6 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">찾기</button>
+                </div>
+            </form>
+            <div class="text-center">
+                <a th:href="" class="text-blue-500 hover:text-blue-600">로그인 하기</a>
+            </div>
+            </form>
+        </div>
+    </section>
+</main>
+<footer class="bg-gray-100 py-4 mt-10">
+    <div class="container mx-auto text-center">
+        <p>Footer content here</p>
+    </div>
+</footer>
+</body>
+<script th:inline="javascript">
+    //체크 확인용 변수
+    let ck = false;
+
+    function emailcheck() {
+        let email = $("#memail").val();
+        //입력했는지 여부 확인
+        if(email == ""){
+            alert("이메일을 입력하세요.");
+            $("#memail").focus();
+            return;//함수 종료
+        }
+    function namecheck() {
+        let id = $("#mname").val();
+        //입력했는지 여부 확인
+        if(id == ""){
+            alert("아이디를 입력하세요.");
+            $("#mname").focus();
+            return;//함수 종료
+        }
+
+            //전송 데이터 형식에 맞게 작성
+            let sendObj = {"memail": email, "mname": name};
+
+        //ajax로 전송 및 결과 받아서 처리
+        $.ajax({
+            url: "emailCheck",
+            type: "get",
+            data: sendObj,
+            success: (res) => {
+                if(res == "ok"){//DB에 들어있는 아이디
+                    ck = false;
+                } else {//DB에 들어있지 않은 아이디
+                    $("#memail").val("");//입력칸 지우기
+                    $("#memail").focus();
+                    ck = true;
+                }
+            },
+            error: (err) => {
+                console.log(err);
+                ck = false;
+            }
+        });
+            $.ajax({
+                url: "nameCheck",
+                type: "get",
+                data: sendObj,
+                success: (res) => {
+                    if(res == "ok"){//DB에 들어있는 아이디
+                        ck = false;
+                    } else {//DB에 들어있지 않은 아이디
+                        $("#mname").val("");//입력칸 지우기
+                        $("#mname").focus();
+                        ck = true;
+                    }
+                },
+                error: (err) => {
+                    console.log(err);
+                    ck = false;
+                }
+            });
+        }
+        return true;//모든 데이터가 입력되었으니 전송!
+        alert("아이디 출력칸");
+    }
+</script>
+</html>
