@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aidata.fundingtrip.dao.BoardDao">
+    <insert id="insertQnABoard" parameterType="com.aidata.fundingtrip.dto.QnABoardDto" useGeneratedKeys="true" keyProperty="qnum">
+        <selectKey keyProperty="qnum" resultType="Integer" order="AFTER">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        INSERT INTO qboard VALUES(NULL, #{qmid}, #{qtitle}, #{qcategory}, #{qcontents}, default)
+    </insert>
+
+    <insert id="insertQnAReply" parameterType="com.aidata.fundingtrip.dto.QnAReplyDto" useGeneratedKeys="true" keyProperty="qrnum">
+        <selectKey keyProperty="qrnum" resultType="Integer" order="AFTER">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        INSERT INTO qreply VALUES (null, #{qrbnum}, #{qrmid}, #{qrcontents}, default)
+    </insert>
+
+    <insert id="insertFundBoard" parameterType="com.aidata.fundingtrip.dto.TripBoardDto" useGeneratedKeys="true" keyProperty="tnum">
+        <selectKey keyProperty="tnum" resultType="Integer" order="AFTER">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        INSERT INTO tboard
+        VALUES (NULL, #{tmid}, #{ttitle}, #{tcontents}, #{tpeople}, #{tstart}, #{tend}, default,#{tcash})
+    </insert>
+
+    <insert id="insertFundFile" parameterType="com.aidata.fundingtrip.dto.TripBoardFileDto">
+        INSERT INTO tboardfile
+        VALUES (NULL,#{tftnum},#{toriname},#{tsysname})
+    </insert>
+
+    <insert id="insertTreply" parameterType="com.aidata.fundingtrip.dto.TripReplyDto" useGeneratedKeys="true" keyProperty="trnum">
+        <selectKey keyProperty="trnum" resultType="Integer" order="AFTER">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        INSERT INTO treply VALUES (NULL,#{trbnum},#{trmid},#{trcontents},DEFAULT)
+    </insert>
+
+    <update id="updateQnABoard" parameterType="com.aidata.fundingtrip.dto.QnABoardDto">
+        UPDATE qboard
+        SET qtitle = #{qtitle},
+            qcontents = #{qcontents}
+        WHERE qnum = #{qnum}
+    </update>
+    <update id="updateTripBoard" parameterType="com.aidata.fundingtrip.dto.TripBoardDto">
+        UPDATE tboard SET ttitle=#{ttitle},tcontents=#{tcontents}, tpeople=#{tpeople}, tstart=#{tstart},tend=#{tend},tcash=#{tcash}  WHERE tnum=#{tnum}
+    </update>
+
+    <update id="updateStatus" parameterType="com.aidata.fundingtrip.dto.TripBoardDto">
+        UPDATE tboard SET tstatus=#{tstatus} WHERE tnum=#{tnum}
+    </update>
+
+    <delete id="deleteQnAReply" parameterType="Integer">
+        DELETE
+        FROM qreply
+        WHERE qrbnum = #{qrbnum}
+    </delete>
+
+    <delete id="deleteQnABoard" parameterType="Integer">
+        DELETE
+        FROM qboard
+        WHERE qnum = #{qnum}
+    </delete>
+    <delete id="deleteTripFiles" parameterType="Integer">
+        DELETE FROM tboardfile WHERE tftnum=#{tnum}
+    </delete>
+    <delete id="deleteTreplays">
+        DELETE FROM treply WHERE trbnum=#{tnum}
+    </delete>
+    <delete id="deleteTripBoard" parameterType="Integer">
+        DELETE FROM tboard WHERE tnum=#{tnum}
+    </delete>
+    <delete id="deleteTripFile" parameterType="String">
+        DELETE FROM tboardfile WHERE tsysname=#{sysname}
+    </delete>
+
+    <select id="selectQnABoard" resultType="com.aidata.fundingtrip.dto.QnABoardDto" parameterType="Integer">
+        SELECT *
+        FROM qboard
+        WHERE qnum = #{qnum}
+    </select>
+
+    <select id="selectQnABoardCnt" resultType="int" parameterType="com.aidata.fundingtrip.dto.SearchDto">
+        SELECT COUNT(*) FROM qboard
+    </select>
+
+    <select id="selectQnAReplyList" resultType="com.aidata.fundingtrip.dto.QnAReplyDto" parameterType="Integer">
+        SELECT *
+        FROM qreply
+        WHERE qrbnum = #{qrbnum}
+    </select>
+
+    <select id="selectLastQnAReply" resultType="com.aidata.fundingtrip.dto.QnAReplyDto" parameterType="Integer">
+        SELECT *
+        FROM qreply
+        WHERE qrnum = #{qrnum}
+    </select>
+
+    <select id="selectTripBoardList" resultType="com.aidata.fundingtrip.dto.TripBoardDto" parameterType="com.aidata.fundingtrip.dto.SearchDto">
+        SELECT * from tlist
+        WHERE tstatus = "승인"
+        <if test="colname != null and colname != ''">
+            WHERE ${colname} LIKE concat('%',#{keyword},'%')
+        </if>
+        LIMIT #{pageNum}, #{listCnt}
+    </select>
+    <select id="selectTripBoardCnt" resultType="java.lang.Integer" parameterType="com.aidata.fundingtrip.dto.SearchDto">
+        SELECT count(*) FROM tlist
+        WHERE tstatus = "승인"
+        <if test="colname != null and colname != ''">
+            WHERE ${colname} LIKE concat('%',#{keyword},'%')
+        </if>
+    </select>
+    <select id="selectTripBoard" resultType="com.aidata.fundingtrip.dto.TripBoardDto" parameterType="Integer">
+        SELECT * FROM tlist WHERE tnum=#{tnum}
+    </select>
+
+    <select id="selectTripFileList" resultType="com.aidata.fundingtrip.dto.TripBoardFileDto" parameterType="Integer">
+        SELECT * FROM tboardfile WHERE tftnum=#{tnum}
+    </select>
+
+    <select id="selectTripReplyList" resultType="com.aidata.fundingtrip.dto.TripReplyDto" parameterType="Integer">
+        SELECT * FROM trlist WHERE trbnum=#{tnum}
+    </select>
+
+    <select id="selectQnABoardList" resultType="com.aidata.fundingtrip.dto.QnABoardDto">
+        SELECT * FROM qboard LIMIT #{pageNum}, #{listCnt}
+    </select>
+
+    <select id="selectTFnameList" resultType="java.lang.String" parameterType="Integer">
+        SELECT tsysname FROM tboardFile WHERE tftnum=#{tnum}
+    </select>
+    <select id="selectLastTreply" resultType="com.aidata.fundingtrip.dto.TripReplyDto" parameterType="Integer">
+        SELECT * FROM trlist WHERE trnum=#{trnum}
+    </select>
+
+    <select id="selectMyTripBoardList" resultType="com.aidata.fundingtrip.dto.TripBoardDto" parameterType="com.aidata.fundingtrip.dto.SearchDto">
+        SELECT * from tlist
+         WHERE tmid=#{mid}
+        <if test="colname != null and colname != ''">
+            WHERE ${colname} LIKE concat('%',#{keyword},'%')
+        </if>
+        LIMIT #{pageNum}, #{listCnt}
+    </select>
+
+    <select id="selectMyTripBoardCnt" resultType="java.lang.Integer" parameterType="com.aidata.fundingtrip.dto.SearchDto">
+        SELECT count(*) FROM tlist
+        WHERE tmid=#{mid}
+        <if test="colname != null and colname != ''">
+            WHERE ${colname} LIKE concat('%',#{keyword},'%')
+        </if>
+    </select>
+
+    <select id="selectAllTripBoardList" resultType="com.aidata.fundingtrip.dto.TripBoardDto" parameterType="com.aidata.fundingtrip.dto.SearchDto">
+        SELECT * from tlist
+        <if test="colname != null and colname != ''">
+            WHERE ${colname} LIKE concat('%',#{keyword},'%')
+        </if>
+        LIMIT #{pageNum}, #{listCnt}
+    </select>
+
+    <select id="selectAllTripBoardCnt"  resultType="java.lang.Integer" parameterType="com.aidata.fundingtrip.dto.SearchDto">
+        SELECT count(*) FROM tlist
+        <if test="colname != null and colname != ''">
+            WHERE ${colname} LIKE concat('%',#{keyword},'%')
+        </if>
+    </select>
+    <select id="getTcashFromTboard" resultType="int" parameterType="Integer">
+        SELECT tcash
+        FROM tboard
+        WHERE tnum = #{tnum}
+    </select>
+</mapper>

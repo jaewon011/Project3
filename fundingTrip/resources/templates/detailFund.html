@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Funding Trip</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script src="js/jquery-3.7.1.min.js"></script>
+
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body class="bg-gray-100">
+<header th:insert="~{fragments::header(${session.member})}"></header>
+<div class="container mx-auto my-8">
+    <div class="bg-white p-8 rounded shadow-md">
+        <h2 class="text-2xl font-bold mb-4" th:text="${tDto.ttitle}"></h2>
+        <div class="detail-content">
+            <div th:if="${#lists.isEmpty(tfList)}" class="text-gray-500">첨부된 파일이 없습니다.</div>
+            <th:block th:each="fitem:${tfList}">
+                <th:block th:if="${fitem.tsysname} == null">
+                    <img class="poster" th:src="@{/images/no_image.jpg}">
+                </th:block>
+                <th:block th:unless="${fitem.tsysname} == null">
+                    <img class="poster" th:src="${'fundUpload/'+fitem.tsysname}">
+                </th:block>
+            </th:block>
+        </div>
+        <!-- 글 정보 표시 -->
+        <div class="mb-4 grid grid-cols-2 gap-4">
+            <div class="t_content">승인 여부</div>
+            <div class="d_content" th:text="${tDto.tstatus}"></div>
+            <div class="t_content">작성자</div>
+            <div class="d_content" th:text="${tDto.tmid}"></div>
+            <div class="t_content">시작일</div>
+            <div class="d_content" th:text="${tDto.tstart}"></div>
+            <div class="t_content">마지막일</div>
+            <div class="d_content" th:text="${tDto.tend}"></div>
+            <div class="t_content">결제 금액</div>
+            <div class="d_content" th:text="${tDto.tcash}"></div>
+            <div class="t_content">펀딩 인원</div>
+            <div class="d_content" th:text="${tDto.tpeople}"></div>
+        </div>
+
+        <div class="mb-4">
+            <div class="t_content content_h">CONTENTS</div>
+            <div class="d_content content_h" th:text="${tDto.tcontents}"></div>
+        </div>
+        <!-- 버튼 영역 -->
+        <div class="mb-4">
+            <button id="upbtn" class="btn-write mr-2">수정</button>
+            <button id="delbtn" class="btn-write mr-2">삭제</button>
+            <button id="backbtn" class="btn-sub mr-2">뒤로</button>
+            <button id="okbtn" class="btn-write mr-2">승인</button>
+            <button id="ccbtn" class="btn-write">거부</button>
+            <button id="paybtn" class="btn-sub float-right bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">결제</button>
+        </div>
+        <!-- 댓글 입력 폼 -->
+        <form id="rform" class="mb-4">
+            <input type="hidden" name="trbnum" th:value="${tDto.tnum}">
+            <input type="hidden" name="trmid" th:value="${session.member.mid}">
+            <textarea name="trcontents" rows="3" class="write-input ta w-full" id="comment"
+                      placeholder="댓글을 적어주세요."></textarea>
+            <input type="button" value="댓글 등록" class="btn-write w-full mt-2" id="rbtn">
+        </form>
+        <!-- 댓글 출력 부분 -->
+        <div id="rSpace">
+            <th:block th:each="ritem:${trList}">
+                <div class="t_content p-20 re" th:text="${ritem.trmid}"></div>
+                <div class="d_content p-50 re" th:text="${ritem.trcontents}"></div>
+                <div class="d_content p-30 re" th:text="${ritem.trdate}"></div>
+            </th:block>
+        </div>
+    </div>
+</div>
+<footer th:insert="~{fragments::footer}"></footer>
+</body>
+<script th:inline="javascript">
+    //수정/삭제 버튼 숨기기
+    $("#upbtn").hide();
+    $("#delbtn").hide();
+    let mid = [[${session.member.mid}]];// 로그인한 ID
+    let tmid = [[${tDto.tmid}]]; // 글 작성자 ID
+    if (mid == tmid) {
+        $("#upbtn").show();
+        $("#delbtn").show();
+    }
+
+    $("#backbtn").click(function () {
+        let url = "/fundList?";
+
+        const searchDto = [[${session.sDto}]]
+        let colname = "";
+        let keyword = "";
+        if (searchDto != null) {
+            colname = searchDto.colname;
+            keyword = searchDto.keyword;
+        }
+
+        let page = [[${session.pageNum}]];
+
+        if (colname == null || colname == "") {//검색 안한 목록 이동
+            url += `pageNum=${page}`;
+        } else {
+            url += `colname=${colname}&keyword=${keyword}&pageNum=${page}`;
+        }
+        console.log(url);
+        location.href = url;
+    });
+
+    $("#delbtn").click(function () {
+        let con = confirm("게시글을 삭제할까요?");
+        if (con == true) {
+            let tnum = [[${tDto.tnum}]];
+            location.href = `/deleteTripBoard?tnum=${tnum}`;
+        }
+    });
+
+    $("#upbtn").click(function () {
+        let tnum = [[${tDto.tnum}]];
+        location.href = `/updateTripBoard?tnum=${tnum}`;
+    });
+
+    //댓글 전송 및 처리
+    $("#rbtn").click(function () {
+        const rForm = $("#rform").serialize();
+
+        //restcontroller에 전송
+        $.ajax({
+            url: "treplyInsert",
+            type: "post",
+            data: rForm,
+            success: function (res) {
+                console.log(res);
+                if (res != null) {
+                    let str = "";
+                    str += `
+                        <div class="t_content p-20 re"> ${res.trmid}</div>
+                        <div class="d_content p-50 re"> ${res.trcontents}</div>
+                        <div class="d_content p-30 re"> ${res.trdate}</div>
+                        `;
+                    $("#rSpace").prepend(str);
+                    $("#comment").val("");
+                } else {
+                    alert("댓글 저장 실패");
+                    $("#comment").val("");
+                    $("#comment").focus();
+                }
+            },
+            error: function (err) {
+                console.log(err);
+                alert("댓글 저장 실패");
+            }
+        })
+    });
+    $("#rform").hide();
+    $("#okbtn").hide();
+    $("#ccbtn").hide();
+    let m = [[${session.member}]];
+    if(m != null){
+        let grade = m.mgrade; // 등급이 관리자인 사람만 보인다
+        if (grade == '관리자') {
+            $("#rform").show();
+            $("#okbtn").show();
+            $("#ccbtn").show();
+        }
+    }
+    //문서의 상태를 승인/거부
+    $("#okbtn").click(function () {
+        let con = confirm("승인할까요?");
+        if (con == true) {
+            let tnum = [[${tDto.tnum}]];
+            location.href=`/updateStatus?tstatus=승인&tnum=${tnum}`;
+        }
+    });
+
+    $("#ccbtn").click(function () {
+        let con = confirm("거부할까요?");
+        if (con == true) {
+            let tnum = [[${tDto.tnum}]];
+            location.href=`/updateStatus?tstatus=거부&tnum=${tnum}`;
+        }
+    });
+    $('#paybtn').click(function (){
+        var tnum = [[${tDto.tnum}]];  // 현재 페이지의 tnum 값을 가져오기
+        $.ajax({
+            url:'/jq/kakaopay.cls?tnum=' + tnum,
+            dataType:'json',
+            success:function (data){
+                var box = data.next_redirect_pc_url;
+                window.open(box);
+            },
+            error:function (error){
+                alert(error);
+            }
+        });
+    });
+</script>
+</html>

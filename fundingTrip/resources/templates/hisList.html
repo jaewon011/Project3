@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Site Name</title>
+	<!-- Tailwind CSS CDN 추가 -->
+	<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+	<script src="js/jquery-3.7.1.min.js"></script>
+	<script th:inline="javascript">
+		$(function () {
+			let m = [[${msg}]];
+			if (m != null) alert(m);
+		})
+	</script>
+</head>
+<body class="bg-gray-100 text-gray-800 font-sans">
+<header>
+	<th:block th:insert="~{fragments::header(${session.member})}" />
+</header>
+<!-- 메인 내용 영역 -->
+<main class="py-8">
+		<!-- 검색 및 작성 버튼 영역 -->
+		<div class="mb-4">
+			<select id="sel" class="p-2 border border-gray-300 rounded mr-2">
+				<option value="hisname" selected>
+					유적지 이름
+				</option>
+				<option value="hisloca" selected>
+					위치
+				</option>
+			</select>
+			<input type="text" id="keyword" class="p-2 border border-gray-300 rounded mr-2">
+			<button id="search" class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 mr-2">
+				검색
+			</button>
+		</div>
+		<!-- 게시글 목록 영역 -->
+		<div class="data-area">
+			<div class="title-row bg-gray-200 font-bold grid grid-cols-1 md:grid-cols-4 p-2 gap-8">
+				<div class="t-no text-center">번호</div>
+				<div class="t-title text-center">유적지 이름</div>
+				<div class="t-local text-center">위치</div>
+				<div class="t-local text-center">이용 안내</div>
+			</div>
+			<div class="data-row grid grid-cols-1 md:grid-cols-4 gap-8 p-2">
+				<th:block th:if="${#lists.isEmpty(hList)}">
+					<div class="text-center w-full p-4 col-span-4">
+						게시글이 없습니다.
+					</div>
+				</th:block>
+				<th:block th:if="${not #lists.isEmpty(hList)}">
+					<th:block th:each="fitem : ${hList}">
+						<div class="hisnum p-2 text-center" th:text="${fitem.hisnum}">
+						</div>
+						<div class="hisname p-2 text-center">
+							<a th:href="@{hisDetail(hisnum=${fitem.hisnum})}" th:text="${fitem.hisname}" class="text-indigo-600 hover:underline"></a>
+						</div>
+						<div class="hisloca p-2 text-center" th:text="${fitem.hisloca}"></div>
+						<div class="hisinfo p-2 text-center" th:text="${fitem.hisinfo}"></div>
+					</th:block>
+				</th:block>
+				<button id="write" class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700">
+		유적지 작성하기
+	</button>
+		<!-- 페이징 및 작성 버튼 영역 -->
+				<div class="btn-area col-span-4 flex justify-center items-center mt-4">
+					<div class="paging text-center my-4" th:utext="${paging}"></div>
+				</div>
+			</div>
+		</div>
+</main>
+<footer>
+	<th:block th:insert="~{fragments::footer}" />
+</footer>
+
+<script th:inline="javascript">
+	$("#write").hide();
+	let m = [[${session.member}]];
+	if(m != null){
+		let grade = m.mgrade; // 등급이 관리자인 사람만 보인다
+		if (grade == '관리자') {
+			$("#write").show();
+		}
+	}
+
+	$("#search").click(function () {
+		let keyword = $("#keyword").val();
+		if (keyword == "") {
+			alert("검색어를 입력하세요.");
+			return;
+		}
+		let select = $("#sel").val();
+		location.href = `/hisList?colname=${select}&keyword=${keyword}&pageNum=1`;
+	});
+
+	$("#write").click(function () {
+		location.href = "/hisWrite";
+	});
+</script>
+</body>
+</html>
