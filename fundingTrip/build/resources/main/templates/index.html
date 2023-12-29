@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Travel Website</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="bg-white text-gray-800">
+<header class="border-b py-4">
+    <div class="container mx-auto flex justify-between items-center">
+        <a href="#" class="text-xl font-bold">✈FundingTrip</a>
+        <nav>
+            <ul class="flex space-x-4">
+                <li><a href="#" class="hover:text-gray-500">My page</a></li>
+                <li><a th:href="@{loginForm}" class="hover:text-gray-500">Login</a></li>
+                <li><a th:href="@{joinForm}" class="hover:text-gray-500">Join</a></li>
+
+            </ul>
+        </nav>
+    </div>
+</header>
+
+<section class="container mx-auto mt-8">
+    <div class="flex justify-between items-center">
+        <button aria-label="Previous slide">&lt;</button>
+        <div class="w-full mx-4">
+            <img src="https://via.placeholder.com/800x400" alt="Main background" class="w-full h-auto rounded">
+        </div>
+        <button aria-label="Next slide">&gt;</button>
+    </div>
+    <div class="text-center my-4">
+        <span class="carousel-indicator active"></span>
+        <span class="carousel-indicator"></span>
+        <span class="carousel-indicator"></span>
+    </div>
+</section>
+
+<section class="container mx-auto mt-8">
+    <h2 class="text-2xl font-semibold mb-4">펀딩트립 추천명소⭐</h2>
+    <div class="grid grid-cols-3 gap-4">
+        <div>
+            <img src="https://via.placeholder.com/300x200" alt="Destination" class="w-full h-auto rounded">
+            <p class="mt-2">Photo caption text</p>
+        </div>
+        <div>
+            <img src="https://via.placeholder.com/300x200" alt="Destination" class="w-full h-auto rounded">
+            <p class="mt-2">Photo caption text</p>
+        </div>
+        <div>
+            <img src="https://via.placeholder.com/300x200" alt="Destination" class="w-full h-auto rounded">
+            <p class="mt-2">Photo caption text</p>
+        </div>
+    </div>
+</section>
+
+<section class="container mx-auto mt-8">
+    <h2 class="text-2xl font-semibold mb-4">자주 묻는 질문</h2>
+    <div class="text-sm">
+        <p class="mb-2">인천에서 최고의 역사적인 장소는 어디인가요?</p>
+        <p class="mb-2">인천에서 아이들과 가족을 위한 역사적인 최고의 장소는 어디인가요? </p>
+        <p class="mb-2">가성비 좋은 인천 유적지 여행지는 어디인가요?</p>
+    </div>
+</section>
+
+<section class="container mx-auto mt-8 mb-16">
+    <h2 class="text-2xl font-semibold mb-4">이달의 행사⭐</h2>
+    <div class="flex">
+        <div class="w-1/2">
+            <img src="https://via.placeholder.com/500x300" alt="Event" class="w-full h-auto rounded">
+        </div>
+        <div class="w-1/2 pl-4">
+            <p class="mt-2">고려산 진달래 축제</p>
+        </div>
+    </div>
+</section>
+
+<footer class="bg-gray-100 py-4">
+    <div class="container mx-auto text-center text-xs">
+        <p>&copy; 2023 TravelTrip. All rights reserved.</p>
+    </div>
+</footer>
+
+<script>
+    // Carousel functionality can be added here
+</script>
+</body>
+</html>

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Site Name</title>
+	<script src="https://cdn.tailwindcss.com"></script>
+	<script th:inline="javascript">
+        $(function () {
+            let m = [[${msg}]];
+            if (m != null) alert(m);
+        })
+	</script>
+</head>
+<body class="bg-white text-gray-800">
+<header class="bg-gray-100 p-4 text-white">
+	<div class="container mx-auto flex justify-between items-center">
+		<div>
+			<a th:href="@{index}" class="flex items-center py-4 px-2">
+				<span class="header-logo text-blue-600 text-2xl">✈️ Funding Trip</span>
+			</a>
+		</div>
+		<div class="hidden md:flex items-center space-x-1">
+			<a th:href="@{index}" class="py-4 px-2 text-gray-700 hover:text-gray-900">홈</a>
+			<a th:href="@{hisList}" class="py-4 px-2 text-gray-700 hover:text-gray-900">여행 정보</a>
+			<a th:href="@{fundList}" class="py-4 px-2 text-gray-700 hover:text-gray-900">펀딩 목록</a>
+			<a th:href="@{detailFund}" class="py-4 px-2 text-gray-700 hover:text-gray-900">나의 펀딩 목록</a>
+			<a th:href="@{myPage}" class="py-4 px-2 text-gray-700 hover:text-gray-900">My Page</a>
+			<a th:href="@{qnaList}" class="py-4 px-2 text-gray-700 hover:text-gray-900">고객센터</a>
+			<a th:href="@{logout}" class="py-4 px-2 text-gray-700 hover:text-gray-900">로그아웃</a>
+		</div>
+	</div>
+</header>
+<main class="py-8">
+	<div class="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-2 gap-8">
+		<div class="border p-4">
+			<img src="https://via.placeholder.com/300x200" alt="photo" class="mx-auto">
+			<div class="text-center mt-4">Photo Name</div>
+		</div>
+		<div class="border p-4">
+			<img src="https://via.placeholder.com/300x200" alt="photo" class="mx-auto">
+			<div class="text-center mt-4">Photo Name</div>
+		</div>
+		<div class="border p-4">
+			<img src="https://via.placeholder.com/300x200" alt="photo" class="mx-auto">
+			<div class="text-center mt-4">Photo Name</div>
+		</div>
+		<div class="border p-4">
+			<img src="https://via.placeholder.com/300x200" alt="photo" class="mx-auto">
+			<div class="text-center mt-4">Photo Name</div>
+		</div>
+	</div>
+
+	<div class="btn-area">
+		<div class="paging" th:utext="${paging}">
+			<button class="wr-btn" id="write">
+				글쓰기
+			</button>
+		</div>
+	</div>
+</main>
+<footer class="bg-gray-100 p-4 text-center text-sm text-gray-500">
+	© 2023 FundTrip. All rights reserved.
+</footer>
+</body>
+<script>
+    $("#write").click(function () {
+        location.href = "/hisWrite";
+    });
+</script>
+</html>

@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang=ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Light Theme Website</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* 추후 스타일 추가 */
+    </style>
+    <script th:inline="javascript">
+        $(function () {
+            let m = [[${msg}]];
+            if(m != null){
+                alert(m);
+            }
+        })
+    </script>
+</head>
+<body class="bg-white text-gray-800">
+<header class="bg-gray-100 py-4">
+    <div class="container mx-auto flex justify-between items-center">
+        <div>
+            <a th:href="" class="flex items-center py-4 px-2">
+                <span class="header-logo text-blue-600 text-2xl">✈️ Funding Trip</span>
+            </a>
+        </div>
+        <div class="hidden md:flex items-center space-x-1">
+            <a th:href="" class="py-4 px-2 text-gray-700 hover:text-gray-900">홈</a>
+            <a th:href="" class="py-4 px-2 text-gray-700 hover:text-gray-900">여행 정보</a>
+            <a th:href="" class="py-4 px-2 text-gray-700 hover:text-gray-900">펀딩 목록</a>
+            <a th:href="" class="py-4 px-2 text-gray-700 hover:text-gray-900">나의 펀딩 목록</a>
+            <a th:href="" class="py-4 px-2 text-gray-700 hover:text-gray-900">My Page</a>
+            <a th:href="" class="py-4 px-2 text-gray-700 hover:text-gray-900">고객센터</a>
+            <a th:href="" class="py-4 px-2 text-gray-700 hover:text-gray-900">로그아웃</a>
+        </div>
+    </div>
+</header>
+<main class="container mx-auto mt-10">
+    <section class="max-w-lg mx-auto">
+        <div class="bg-gray-200 p-6 rounded-lg shadow-lg">
+            <form th:action="@{serPwProc}" method="post"
+                  class="serch-form" name="serForm"
+                  onsubmit="return check()">
+            <h2 class="text-2xl font-semibold mb-4 text-center">비밀번호 찾기</h2>
+            <form>
+                <div class="mb-4">
+                    <label for="email" class="block text-sm font-medium text-gray-700 mb-2">E-mail</label>
+                    <input type="email" id="email" class="w-full px-3 py-2 border border-gray-300 rounded-md" placeholder="Enter your email">
+                </div>
+                <div class="mb-6">
+                    <label for="id" class="block text-sm font-medium text-gray-700 mb-2">아이디</label>
+                    <input type="text" id="id" class="w-full px-3 py-2 border border-gray-300 rounded-md" placeholder="Enter your name">
+                </div>
+                <div class="flex justify-center mb-4">
+                    <button type="submit" class="px-6 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">찾기</button>
+                </div>
+            </form>
+            <div class="text-center">
+                <a th:href="" class="text-blue-500 hover:text-blue-600">로그인 하기</a>
+            </div>
+            </form>
+        </div>
+    </section>
+</main>
+<footer>
+    <th:block th:insert="~{fragments::footer}" />
+</footer>
+</body>
+<script th:inline="javascript">
+   //체크 확인용 변수
+    let ck = false;
+
+    function idcheck() {
+        let id = $("#mid").val();
+        //입력했는지 여부 확인
+        if(id == ""){
+            alert("아이디를 입력하세요.");
+            $("#mid").focus();
+            return;//함수 종료
+        }
+        function emailcheck() {
+            let email = $("#memail").val();
+            //입력했는지 여부 확인
+            if(email == ""){
+                alert("이메일을 입력하세요.");
+                $("#memail").focus();
+                return;//함수 종료
+            }
+
+        //전송 데이터 형식에 맞게 작성
+            let sendObj = {"mid": id, "memail": email};
+
+
+        //ajax로 전송 및 결과 받아서 처리
+        $.ajax({
+            url: "idCheck",
+            type: "get",
+            data: sendObj,
+            success: (res) => {
+                if(res == "ok"){//DB에 들어있는 아이디
+                    ck = false;
+                } else {//DB에 들어있지 않은 아이디
+                    $("#mid").val("");//입력칸 지우기
+                    $("#mid").focus();
+                    ck = true;
+                }
+            },
+            error: (err) => {
+                console.log(err);
+                ck = false;
+            }
+        });
+    }
+        //ajax로 전송 및 결과 받아서 처리
+        $.ajax({
+            url: "emailCheck",
+            type: "get",
+            data: sendObj,
+            success: (res) => {
+                if(res == "ok"){//DB에 들어있는 아이디
+                    ck = false;
+                } else {//DB에 들어있지 않은 아이디
+                    $("#memail").val("");//입력칸 지우기
+                    $("#memail").focus();
+                    ck = true;
+                }
+            },
+            error: (err) => {
+                console.log(err);
+                ck = false;
+            }
+        });
+        return true;//모든 데이터가 입력되었으니 전송!
+        alert("비밀번호 출력칸");
+    }
+</script>
+</html>
